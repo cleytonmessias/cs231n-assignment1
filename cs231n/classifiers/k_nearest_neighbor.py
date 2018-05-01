@@ -95,7 +95,8 @@ class KNearestNeighbor(object):
       # Compute the l2 distance between the ith test point and all training #
       # points, and store the result in dists[i, :].                        #
       #######################################################################
-      pass
+      
+      dists[i,:] = np.sqrt(np.sum(np.square(self.X_train - X[i,:]),axis=1 ))
       #######################################################################
       #                         END OF YOUR CODE                            #
       #######################################################################
@@ -123,7 +124,17 @@ class KNearestNeighbor(object):
     # HINT: Try to formulate the l2 distance using matrix multiplication    #
     #       and two broadcast sums.                                         #
     #########################################################################
-    pass
+    ## (x-y)ˆ2  = xˆ2 + yˆ2 -2xy
+    
+
+    # dists = np.sqrt((np.square(X[:,np.newaxis]-self.X_train).sum(axis=2)))
+
+    test_sum = np.sum(np.square(X),axis=1)
+    train_sum = np.sum(np.square(self.X_train),axis=1)
+    inner_product  = -2 * np.dot(X,self.X_train.T)
+    dists = np.sqrt(train_sum + test_sum.reshape(-1, 1)  + inner_product)
+
+
     #########################################################################
     #                         END OF YOUR CODE                              #
     #########################################################################
@@ -155,9 +166,7 @@ class KNearestNeighbor(object):
       # neighbors. Store these labels in closest_y.                           #
       # Hint: Look up the function numpy.argsort.                             #
       #########################################################################
-      self.X_train[i]
-      #  y_indicies = np.argsort(dists[i, :], axis = 0)
-      # closest_y = self.y_train[y_indicies[:k]]
+      
       knn_indices = dists[i].argsort()[:k]
       closest_y = self.y_train[knn_indices]
 
