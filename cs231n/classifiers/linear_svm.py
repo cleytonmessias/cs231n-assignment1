@@ -69,7 +69,7 @@ def svm_loss_vectorized(W, X, y, reg):
   loss = 0.0
   dW = np.zeros(W.shape) # initialize the gradient as zero
 
-  scores = W.dot(X)
+  scores = X.dot(W)
   
 
   #############################################################################
