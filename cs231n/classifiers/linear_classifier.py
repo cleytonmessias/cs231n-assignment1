@@ -40,6 +40,9 @@ class LinearClassifier(object):
       X_batch = None
       y_batch = None
 
+      # X_batch = [:batch_size]
+
+
       #########################################################################
       # TODO:                                                                 #
       # Sample batch_size elements from the training data and their           #
@@ -51,7 +54,9 @@ class LinearClassifier(object):
       # Hint: Use np.random.choice to generate indices. Sampling with         #
       # replacement is faster than sampling without replacement.              #
       #########################################################################
-      pass
+      random_idxs = np.random.choice(dim, dim, replace=False)
+      X_batch = X[random_idxs, :]
+      y_batch = y[random_idxs]
       #########################################################################
       #                       END OF YOUR CODE                                #
       #########################################################################
@@ -65,7 +70,7 @@ class LinearClassifier(object):
       # TODO:                                                                 #
       # Update the weights using the gradient and the learning rate.          #
       #########################################################################
-      pass
+      self.W += -learning_rate * grad
       #########################################################################
       #                       END OF YOUR CODE                                #
       #########################################################################
@@ -115,7 +120,8 @@ class LinearClassifier(object):
     - loss as a single float
     - gradient with respect to self.W; an array of the same shape as W
     """
-    pass
+    
+    
 
 
 class LinearSVM(LinearClassifier):
