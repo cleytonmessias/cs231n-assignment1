@@ -29,7 +29,27 @@ def softmax_loss_naive(W, X, y, reg):
   # here, it is easy to run into numeric instability. Don't forget the        #
   # regularization!                                                           #
   #############################################################################
-  pass
+  num_classes = W.shape[1]
+  num_train = X.shape[0]
+  
+  for i in range(num_train):
+    scores = X[i, :].dot(W)
+    scores -= max(scores)
+    correct_class_scores = scores[y[i]]
+    denom = np.sum(np.exp(scores))
+    prob = np.exp(correct_class_scores)/denom
+    loss += -np.log(prob)
+
+    for j in range(num_classes):
+      if j == y[i]:
+        dW[:, y[i]] += (np.exp(scores[j])/ denom-1) * X[i,:]
+      else:
+        dW[:, j] += (np.exp(scores[j])/denom) * X[i, :]
+
+
+
+  loss /= num_train
+  loss += 0.5 * reg * np.sum(W * W)  
   #############################################################################
   #                          END OF YOUR CODE                                 #
   #############################################################################
@@ -47,13 +67,38 @@ def softmax_loss_vectorized(W, X, y, reg):
   loss = 0.0
   dW = np.zeros_like(W)
 
+  ## https://medium.com/@awjuliani/simple-softmax-in-python-tutorial-d6b4c4ed5c16
+  ## http://bigstuffgoingon.com/blog/posts/softmax-loss-gradient/
+  ## https://ewanlee.github.io/2017/03/05/cs231n-Assignment-1-softmax/
+
   #############################################################################
   # TODO: Compute the softmax loss and its gradient using no explicit loops.  #
   # Store the loss in loss and the gradient in dW. If you are not careful     #
   # here, it is easy to run into numeric instability. Don't forget the        #
   # regularization!                                                           #
   #############################################################################
-  pass
+  num_classes = W.shape[1]
+  num_train = X.shape[0]
+
+  scores = X.dot(W)
+
+  scores -= np.matrix(np.max(scores, axis=1)).T
+
+  term1 = -scores[np.arange(num_train), y]
+  sum_j = np.sum(np.exp(scores), axis=1)
+  term2 = np.log(sum_j)
+  loss = term1 + term2
+
+  loss /= num_train
+  loss += 0.5 *reg * np.sum(W*W)
+
+  coef = np.exp(scores) / np.matrix(sum_j).T
+  coef[np.arange(num_train), y] -= 1
+  dW = X.T.dot(coef)
+  dW /= num_train
+  dW += reg * W
+
+
   #############################################################################
   #                          END OF YOUR CODE                                 #
   #############################################################################
