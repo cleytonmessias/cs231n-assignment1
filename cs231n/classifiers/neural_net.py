@@ -97,14 +97,15 @@ class TwoLayerNet(object):
     # in the variable loss, which should be a scalar. Use the Softmax           #
     # classifier loss.                                                          #
     #############################################################################
-    scores -= np.max(scores, axis=1)[:, np.newaxis]
-    
+    scores = scores - np.max(scores, axis = 1).reshape(-1,1)
+
     exp_scores = np.exp(scores)
-    probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
+    probs = exp_scores / np.sum(exp_scores, axis=1).reshape(-1,1)
     # compute the loss: average cross-entropy loss and regularization
     # Perguntar Diego o pq do "range"
-    correct_logprobs = -np.log(probs[range(N), y])
-    data_loss = np.sum(correct_logprobs) / N
+    correct_logprobs = np.log(probs[range(N), y])
+    data_loss = -np.sum(correct_logprobs)
+    data_loss /= N
     reg_loss = 0.5 * reg * ( np.sum(W1*W1) + np.sum(W2*W2))
     loss = data_loss + reg_loss
     
